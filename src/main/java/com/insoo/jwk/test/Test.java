@@ -1,6 +1,6 @@
 package com.insoo.jwk.test;
 
-import com.insoo.javapractice.utils.Utils;
+import com.insoo.jwk.utils.Utils;
 
 import java.util.*;
 import java.util.Map.Entry;
