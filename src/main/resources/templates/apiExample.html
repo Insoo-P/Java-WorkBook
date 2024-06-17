@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>API-Example</title>
+    <link rel="stylesheet" href="/css/apiExample.css">
+</head>
+<body>
+    <div class="container">
+        <h1>사업자등록 상태조회 API</h1>
+        <form id="brnoRequestForm">
+            <h2>Request Form</h2>
+            <label for="brno">사업자번호:</label>
+            <input type="text" id="brno" name="brno" maxlength="10" minlength="10" required>
+            <button id="brnoBtn" type="submit">Submit</button>
+        </form>
+        
+        <div id="brnoResponseForm" style="display:none;">
+            <h2>Response Form</h2>
+            <form>
+                <label for="tax_type">tax_type:</label>
+                <input type="text" id="tax_type" name="tax_type">
+            </form>
+        </div>
+    </div>
+</body>
+
+<script>
+
+const brnoRequestForm = document.getElementById("brnoRequestForm");
+    
+brnoRequestForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        brnoRequestForm
+
+        const brnoValue = brnoRequestForm.elements['brno'].value
+        console.log(brnoValue)
+        const bno_arr = []
+        bno_arr.push(brnoValue)
+        const data = JSON.stringify({ "b_no": bno_arr });
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=xqCmt1IwsBOcknFwJPerGVSfexBpw8S%2F%2Flv9z9QjEEabqun4boY3K2yBFgFf9br7MwuyXhpga3Wzc1FcfT%2FnnA%3D%3D', true);
+        xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+
+        xhr.onload = function() {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                const response = JSON.parse(xhr.responseText);
+                const tax_type = document.getElementById('tax_type')
+                const brnoResponseForm = document.getElementById('brnoResponseForm')
+                tax_type.value = response.data[0].tax_type
+                brnoResponseForm.style.display = 'block'
+            } else {
+                console.error('Request failed with status', xhr.status);
+            }
+        };
+
+        xhr.onerror = function() {
+            console.error('Request failed');
+        };
+
+
+        xhr.send(data);
+})
+
+
+</script>
+
+</html>
