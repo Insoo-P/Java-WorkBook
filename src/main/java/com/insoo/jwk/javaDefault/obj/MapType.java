@@ -1,4 +1,4 @@
-package com.insoo.jwk.obj;
+package com.insoo.jwk.javaDefault.obj;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.insoo.jwk.utils;
+package com.insoo.jwk.javaDefault.utils;
 
 import java.util.*;
 import java.util.Map.Entry;

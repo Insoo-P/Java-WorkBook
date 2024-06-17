@@ -1,4 +1,4 @@
-package com.insoo.jwk.io;
+package com.insoo.jwk.javaDefault.io;
 
 import java.io.File;
 import java.io.IOException;

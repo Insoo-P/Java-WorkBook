@@ -1,4 +1,4 @@
-package com.insoo.jwk.etc;
+package com.insoo.jwk.javaDefault.etc;
 
 import java.util.Arrays;
 

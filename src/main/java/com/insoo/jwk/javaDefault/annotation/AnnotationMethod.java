@@ -1,4 +1,4 @@
-package com.insoo.jwk.annotation;
+package com.insoo.jwk.javaDefault.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
