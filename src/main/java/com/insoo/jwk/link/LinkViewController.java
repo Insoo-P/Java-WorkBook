@@ -10,7 +10,6 @@ public class LinkViewController {
 
     @GetMapping("apiExample")
     public String viewApiExample(){
-        System.out.println("테스트");
         return "apiExample";
     }
 }

@@ -25,45 +25,119 @@
     </div>
 </body>
 
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+    const brnoRequestForm = document.getElementById("brnoRequestForm");
+    const brnoValue = brnoRequestForm.elements['brno'].value
+    const bno_arr = []
+    bno_arr.push(brnoValue)
+    const data = JSON.stringify({ "b_no": bno_arr });
 
-const brnoRequestForm = document.getElementById("brnoRequestForm");
-    
-brnoRequestForm.addEventListener('submit', function(event) {
+    // Front에서 보내기
+    const frontApiFn = function(event){
         event.preventDefault();
-        brnoRequestForm
 
-        const brnoValue = brnoRequestForm.elements['brno'].value
-        console.log(brnoValue)
-        const bno_arr = []
-        bno_arr.push(brnoValue)
-        const data = JSON.stringify({ "b_no": bno_arr });
+        // 1. XMLHttpRequest 방법
+        // const xhr = new XMLHttpRequest();
+        // xhr.open('POST', 'https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=xqCmt1IwsBOcknFwJPerGVSfexBpw8S%2F%2Flv9z9QjEEabqun4boY3K2yBFgFf9br7MwuyXhpga3Wzc1FcfT%2FnnA%3D%3D', true);
+        // xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=xqCmt1IwsBOcknFwJPerGVSfexBpw8S%2F%2Flv9z9QjEEabqun4boY3K2yBFgFf9br7MwuyXhpga3Wzc1FcfT%2FnnA%3D%3D', true);
-        xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+        // xhr.onload = function() {
+        //     if (xhr.status >= 200 && xhr.status < 300) {
+        //         const response = JSON.parse(xhr.responseText);
+        //         const tax_type = document.getElementById('tax_type')
+        //         const brnoResponseForm = document.getElementById('brnoResponseForm')
+        //         tax_type.value = response.data[0].tax_type
+        //         brnoResponseForm.style.display = 'block'
+        //     } else {
+        //         console.error('Request failed with status', xhr.status);
+        //     }
+        // };
 
-        xhr.onload = function() {
-            if (xhr.status >= 200 && xhr.status < 300) {
-                const response = JSON.parse(xhr.responseText);
-                const tax_type = document.getElementById('tax_type')
-                const brnoResponseForm = document.getElementById('brnoResponseForm')
-                tax_type.value = response.data[0].tax_type
-                brnoResponseForm.style.display = 'block'
-            } else {
-                console.error('Request failed with status', xhr.status);
-            }
-        };
+        // xhr.onerror = function() {
+        //     console.error('Request failed');
+        // };
 
-        xhr.onerror = function() {
-            console.error('Request failed');
-        };
+        // xhr.send(data);
 
 
-        xhr.send(data);
-})
+
+        // 2. fetch 방법
+        // fetch('https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=xqCmt1IwsBOcknFwJPerGVSfexBpw8S%2F%2Flv9z9QjEEabqun4boY3K2yBFgFf9br7MwuyXhpga3Wzc1FcfT%2FnnA%3D%3D', {
+        // method: 'POST',
+        // headers: {
+        //     'Content-Type': 'application/json'
+        // },
+        // body: data
+        // })
+        // .then(response => {
+        //     if (!response.ok) {
+        //     throw new Error('Network response was not ok');
+        //     }
+        //     return response.json(); // JSON 형태로 파싱된 응답을 반환
+        // })
+        // .then(data => {
+        //     const tax_type = document.getElementById('tax_type')
+        //     const brnoResponseForm = document.getElementById('brnoResponseForm')
+        //     tax_type.value = data.data[0].tax_type
+        //     brnoResponseForm.style.display = 'block'
+        //     console.log(data);
+        // })
+        // .catch(error => {
+        //     // 오류 처리
+        //     console.error('Fetch error:', error);
+        // });
 
 
+
+        // 3. Axios 방법
+        // Axios 설치 필요: npm install axios
+        // const axios = require('axios'); // Node.js 환경에서는 require 사용
+
+        axios.post('https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=xqCmt1IwsBOcknFwJPerGVSfexBpw8S%2F%2Flv9z9QjEEabqun4boY3K2yBFgFf9br7MwuyXhpga3Wzc1FcfT%2FnnA%3D%3D', {
+            "b_no": bno_arr
+        })
+        .then(response => {
+            // 성공적으로 요청을 처리한 경우의 로직
+            console.log('Response:', response.data);
+
+            // 서버에서 반환된 데이터를 이용하여 처리할 로직을 작성합니다.
+            const tax_type = document.getElementById('tax_type');
+            const brnoResponseForm = document.getElementById('brnoResponseForm');
+            tax_type.value = response.data.data[0].tax_type; // 예시에서는 response.data.data[0].tax_type로 데이터를 가져오고 있습니다.
+            brnoResponseForm.style.display = 'block';
+        })
+        .catch(error => {
+            // 요청 실패 시 오류 처리
+            console.error('Axios error:', error);
+        });
+    }
+
+    // Front에서 보내기
+    // brnoRequestForm.addEventListener('submit', frontApiFn)
+
+
+    // Back에서 보내기
+    const backApiFn = function(event){
+        event.preventDefault();
+
+        axios.post('/link/api/brno',{ "b_no": bno_arr }).then(response => {
+            // 성공적으로 요청을 처리한 경우의 로직
+            console.log('Response:', response.data);
+
+            // 서버에서 반환된 데이터를 이용하여 처리할 로직을 작성합니다.
+            const tax_type = document.getElementById('tax_type');
+            const brnoResponseForm = document.getElementById('brnoResponseForm');
+            tax_type.value = response.data.data[0].tax_type;
+            brnoResponseForm.style.display = 'block';
+        })
+        .catch(error => {
+            // 요청 실패 시 오류 처리
+            console.error('Axios error:', error);
+        });
+    }
+    // Back에서 보내기
+    brnoRequestForm.addEventListener('submit', backApiFn)
 </script>
 
 </html>
