@@ -28,10 +28,7 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
     const brnoRequestForm = document.getElementById("brnoRequestForm");
-    const brnoValue = brnoRequestForm.elements['brno'].value
-    const bno_arr = []
-    bno_arr.push(brnoValue)
-    const data = JSON.stringify({ "b_no": bno_arr });
+
 
     // Front에서 보내기
     const frontApiFn = function(event){
@@ -120,7 +117,10 @@
     // Back에서 보내기
     const backApiFn = function(event){
         event.preventDefault();
-
+        const brnoValue = brnoRequestForm.elements['brno'].value
+        const bno_arr = []
+        bno_arr.push(brnoValue)
+        const data = JSON.stringify({ "b_no": bno_arr });
         axios.post('/link/api/brno',{ "b_no": bno_arr }).then(response => {
             // 성공적으로 요청을 처리한 경우의 로직
             console.log('Response:', response.data);
