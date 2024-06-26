@@ -2,7 +2,13 @@ package com.insoo.jwk.link;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,7 +16,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -25,7 +30,11 @@ public class LinkApiController {
         Map<String, Object> responseMap = null;
         // 요청 보내기
         try {
-            responseMap = HttpURLsendRequest(urlString, paramMap);
+            // HttpURLConnection 방법
+            // responseMap = HttpURLsendRequest(urlString, paramMap);
+
+            // RestTemplate 방법
+            responseMap = RestTemplateRequest(urlString, paramMap);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -33,11 +42,11 @@ public class LinkApiController {
         return responseMap;
     }
 
+    // HttpURLConnection 방법
     private Map<String, Object> HttpURLsendRequest(String urlString, Map<String, Object> paramMap) throws Exception {
         // URL 객체 생성
         URL url = new URL(urlString);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
         // 요청 메소드 및 헤더 설정
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -79,4 +88,41 @@ public class LinkApiController {
         }
     }
 
+    // RestTemplate 방법
+    private Map<String, Object> RestTemplateRequest(String urlString, Map<String, Object> paramMap) throws Exception {
+
+        // headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        // RestTemplate 생성
+        RestTemplate restTemplate = new RestTemplate();
+
+        // 요청 헤더 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Accept", "application/json");
+
+        Gson gson = new Gson();
+        String jsonInputString = gson.toJson(paramMap);
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(jsonInputString, headers);
+        try {
+            // 요청 보내고 응답 받기
+            ResponseEntity<Map> response = new RestTemplate().postForEntity(urlString, requestEntity, Map.class);
+
+//            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+//                    urlString,
+//                    HttpMethod.POST,
+//                    requestEntity,
+//                    new ParameterizedTypeReference<Map<String, Object>>() {});
+            // 응답 출력
+            System.out.println("Response Code: " + response.getStatusCode());
+            System.out.println("Response Body: " + response.getBody());
+            paramMap = response.getBody();
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
+            System.out.println("Error: " + e.getStatusCode());
+            System.out.println("Error Body: " + e.getResponseBodyAsString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return paramMap;
+    }
 }
